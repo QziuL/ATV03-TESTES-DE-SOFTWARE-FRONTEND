@@ -258,6 +258,7 @@ export function LivrosPage() {
                   <label>Título do Livro</label>
                   <input
                     placeholder="Ex: Dom Casmurro"
+                    name='titulo'
                     value={form.titulo}
                     onChange={e => setForm({ ...form, titulo: e.target.value })}
                     required
@@ -267,6 +268,7 @@ export function LivrosPage() {
                 <div className="form-field">
                   <label>Autor</label>
                   <input
+                    name='autor'
                     placeholder="Ex: Machado de Assis"
                     value={form.autor}
                     onChange={e => setForm({ ...form, autor: e.target.value })}
