@@ -16,18 +16,18 @@ test.describe("Gerenciamento de Emprestimos (E2E)", () => {
 
     test("Deve permitir realizar um empréstimo de livro", async ({ page }) => {
         await page.goto('/emprestimos');
-        await page.click('.fab');
-        await page.locator('select[name="livro_id"]').selectOption({ label: 'Livro E2E 549' });
+        await page.locator('.fab').click();
+        await page.locator('select[name="livro_id"]').selectOption({ label: 'aaa' });
         await page.locator('select[name="usuario_id"]').selectOption({ label: 'luiz' });
-        await page.fill('input[name="data_devolucao_prevista"]', '2026-06-02');
-        await page.click('button[type="submit"]');
-        await expect(page.getByText("Ativo")).toBeVisible();
+        await page.fill('input[name="data_devolucao_prevista"]', '2026-07-02');
+        await page.locator('button[type="submit"]').click();
+        await expect(page.locator('span:has-text("Ativo")')).toBeVisible();
     });
 
     test("Deve registrar a devolução de um livro", async ({ page }) => {
         await page.goto('/emprestimos');
-        await page.click('button:has-text("Devolver")');
-        await page.click('button:has-text("Confirmar")');
+        await page.locator('button:has-text("Devolver")').click();
+        await page.locator('button:has-text("Confirmar")').click();
         await expect(page.getByText("Devolução concluída.")).toBeVisible();
     });
 
