@@ -3,15 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import * as emprestimoService from '../services/emprestimoService';
 import * as livroService from '../services/livroService';
 import * as usuarioService from '../services/usuarioService';
-import { 
-  Plus, 
-  Handshake, 
-  Book, 
-  User, 
-  Calendar, 
-  X, 
-  ChevronLeft, 
-  ChevronRight, 
+import {
+  Plus,
+  Handshake,
+  Book,
+  User,
+  Calendar,
+  X,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle,
   AlertCircle,
   Edit2,
@@ -42,12 +42,12 @@ export function EmprestimosPage() {
       const [e, l, u] = await Promise.all([
         emprestimoService.listarEmprestimos(),
         livroService.listarLivros(),
-        usuarioService.listarUsuarios().catch(() => []) 
+        usuarioService.listarUsuarios().catch(() => [])
       ]);
 
       setLista(Array.isArray(e) ? e : (e ? [e] : []));
       setLivros(l);
-      
+
       if (u.length === 0 && usuario) {
         setUsuarios([usuario]);
       } else {
@@ -150,8 +150,16 @@ export function EmprestimosPage() {
     setModalAberto(true);
   };
 
-  const livrosDisponiveis = livros.filter(l => (l.disponivel ?? 0) > 0 || (editando && l.id === editando.livro_id));
+  // const livrosDisponiveis = livros.filter(l => (l.disponivel ?? 0) > 0 || (editando && l.id === editando.livro_id));
 
+  // 1. Apenas livros disponíveis (sem contar o próprio, caso esteja editando)
+  const livrosDisponiveis = livros.filter(l => {
+    if (editando && l.id === editando.livro_id) return true; // Permite editar mantendo o mesmo livro
+    return (l.disponivel || 0) > 0;
+  });
+
+  // 2. Todos os livros (para o SELECT ficar completo)
+  const todosLivros = livros;
   return (
     <div className="stack">
       <div className="page-intro">
@@ -273,7 +281,7 @@ export function EmprestimosPage() {
                   <label>Livro</label>
                   <select name="livro_id" defaultValue={editando?.livro_id || ''} required>
                     <option value="">Selecione um livro</option>
-                    {livrosDisponiveis.map(l => (
+                    {todosLivros.map(l => (
                       <option key={l.id} value={l.id}>{l.titulo}</option>
                     ))}
                   </select>
@@ -289,11 +297,11 @@ export function EmprestimosPage() {
                 </div>
                 <div className="form-field">
                   <label>Data de Devolução Prevista</label>
-                  <input 
-                    type="date" 
-                    name="data_devolucao_prevista" 
-                    defaultValue={editando?.data_devolucao_prevista?.split('T')[0] || ''} 
-                    required 
+                  <input
+                    type="date"
+                    name="data_devolucao_prevista"
+                    defaultValue={editando?.data_devolucao_prevista?.split('T')[0] || ''}
+                    required
                   />
                 </div>
               </div>
@@ -312,10 +320,10 @@ export function EmprestimosPage() {
         <div className="overlay" onClick={() => setConfirmacao(null)}>
           <div className="modal" style={{ maxWidth: '360px' }} onClick={e => e.stopPropagation()}>
             <div className="modal-body" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
-              <div style={{ 
-                width: '64px', 
-                height: '64px', 
-                borderRadius: '32px', 
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '32px',
                 background: confirmacao.tipo === 'danger' ? 'var(--danger-soft)' : 'var(--success-soft)',
                 color: confirmacao.tipo === 'danger' ? 'var(--danger)' : 'var(--success)',
                 display: 'flex',
@@ -332,8 +340,8 @@ export function EmprestimosPage() {
               <button className="btn btn--secondary" style={{ flex: 1 }} onClick={() => setConfirmacao(null)}>
                 Voltar
               </button>
-              <button 
-                className={`btn btn--${confirmacao.tipo}`} 
+              <button
+                className={`btn btn--${confirmacao.tipo}`}
                 style={{ flex: 1 }}
                 onClick={confirmacao.action}
               >
